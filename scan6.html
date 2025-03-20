@@ -46,8 +46,6 @@
         <a-video 
           id="videoPlane"
           position="0 0 0"
-          width="0.9"   <!-- Adjusted width for portrait -->
-          height="1.6"  <!-- Adjusted height for portrait -->
           rotation="0 0 0"
           material="shader: flat"
           visible="false"
@@ -116,6 +114,27 @@
 
       video.addEventListener("ended", () => {
         videoPlane.setAttribute("visible", "false");
+      });
+
+      // Adjust video aspect ratio dynamically
+      video.addEventListener("loadedmetadata", () => {
+        const aspectRatio = video.videoWidth / video.videoHeight;
+        let width, height;
+
+        if (aspectRatio > 1) {
+          // Landscape (16:9)
+          width = 1.6;
+          height = width / aspectRatio;
+        } else {
+          // Portrait (9:16)
+          height = 1.6;
+          width = height * aspectRatio;
+        }
+
+        videoPlane.setAttribute("width", width);
+        videoPlane.setAttribute("height", height);
+
+        console.log(`Adjusted video plane to width: ${width}, height: ${height}`);
       });
     </script>
   </body>
