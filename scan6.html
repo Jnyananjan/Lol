@@ -39,9 +39,8 @@
       renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false"
-    >
+    >  
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
       <a-entity mindar-image-target="targetIndex: 0" id="targetEntity">
         <a-video 
           id="videoPlane"
@@ -61,8 +60,8 @@
       src="https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/ar-content//uno.mp4" 
       playsinline 
       webkit-playsinline 
-      style="display: none"
-      preload="auto"
+      style="display: none" 
+      preload="auto" 
       crossorigin="anonymous"
     ></video>
 
@@ -84,8 +83,8 @@
       document.querySelector("a-scene").addEventListener("targetLost", () => {
         targetFound = false;
         video.pause();
-        video.currentTime = 0; // Reset video to the start
-        videoPlane.setAttribute("visible", "false"); // Hide the video plane
+        video.currentTime = 0;
+        videoPlane.setAttribute("visible", "false");
         console.log("Target lost, video stopped.");
       });
 
@@ -94,6 +93,16 @@
           try {
             await video.play();
             console.log("Video started playing");
+
+            // Get the video's natural width and height
+            video.onloadedmetadata = function () {
+              const aspectRatio = video.videoWidth / video.videoHeight;
+              const height = 1;
+              const width = height * aspectRatio;
+
+              videoPlane.setAttribute("width", width);
+              videoPlane.setAttribute("height", height);
+            };
 
             videoPlane.setAttribute("visible", "true");
             videoPlane.setAttribute("src", "#videoPlayer");
@@ -114,27 +123,6 @@
 
       video.addEventListener("ended", () => {
         videoPlane.setAttribute("visible", "false");
-      });
-
-      // Adjust video aspect ratio dynamically
-      video.addEventListener("loadedmetadata", () => {
-        const aspectRatio = video.videoWidth / video.videoHeight;
-        let width, height;
-
-        if (aspectRatio > 1) {
-          // Landscape (16:9)
-          width = 1.6;
-          height = width / aspectRatio;
-        } else {
-          // Portrait (9:16)
-          height = 1.6;
-          width = height * aspectRatio;
-        }
-
-        videoPlane.setAttribute("width", width);
-        videoPlane.setAttribute("height", height);
-
-        console.log(`Adjusted video plane to width: ${width}, height: ${height}`);
       });
     </script>
   </body>
